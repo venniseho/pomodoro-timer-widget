@@ -27,13 +27,13 @@
             background: linear-gradient(145deg, #fefcf7 0%, #f9f5ed 100%);
             border: 1px solid rgba(139, 115, 85, 0.1);
             border-radius: 24px;
-            width: 560px;
-            height: 400px;
+            width: 650px;
+            height: 480px;
             box-shadow: 
                 0 20px 40px rgba(139, 115, 85, 0.15),
                 0 8px 16px rgba(160, 130, 98, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            padding: 24px;
+            padding: 28px;
             display: flex;
             position: relative;
             overflow: hidden;
@@ -43,7 +43,7 @@
         .timer-view {
             width: 100%;
             display: flex;
-            gap: 24px;
+            gap: 32px;
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
@@ -57,22 +57,24 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding-right: 16px;
         }
 
         .controls-section {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
+            padding-left: 16px;
         }
 
         /* History View */
         .history-view {
             position: absolute;
-            top: 24px;
-            left: 24px;
-            right: 24px;
-            bottom: 24px;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
             display: flex;
             flex-direction: column;
             transform: translateX(100%);
@@ -87,11 +89,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .widget-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: #5d4e37;
             letter-spacing: -0.02em;
@@ -101,12 +103,11 @@
             background: linear-gradient(145deg, #f4f0e8, #e8ddc7);
             border: 1px solid rgba(139, 115, 85, 0.2);
             border-radius: 12px;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            padding-left: 10px;
             justify-content: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(139, 115, 85, 0.1);
@@ -119,9 +120,9 @@
         }
 
         .timer-circle {
-            width: 160px;
-            height: 160px;
-            margin-bottom: 20px;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 24px;
             position: relative;
         }
 
@@ -149,7 +150,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 300;
             color: #5d4e37;
             font-variant-numeric: tabular-nums;
@@ -159,9 +160,9 @@
         .session-status {
             text-align: center;
             color: #8b7d6b;
-            font-size: 0.85rem;
-            margin-bottom: 24px;
-            height: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            height: 22px;
             font-weight: 400;
         }
 
@@ -170,9 +171,9 @@
             background: linear-gradient(145deg, #f4f0e8, #ede4d3);
             border: 1px solid rgba(139, 115, 85, 0.1);
             border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
-            gap: 2px;
+            padding: 6px;
+            margin-bottom: 24px;
+            gap: 3px;
             box-shadow: inset 0 2px 4px rgba(139, 115, 85, 0.05);
         }
 
@@ -180,9 +181,9 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 500;
             color: #8b7d6b;
             cursor: pointer;
@@ -201,8 +202,8 @@
 
         .controls {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 14px;
+            margin-bottom: 24px;
         }
 
         .btn {
@@ -211,8 +212,8 @@
             color: #fefcf7;
             border: none;
             border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 0.9rem;
+            padding: 14px 18px;
+            font-size: 0.95rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -246,27 +247,27 @@
         .time-settings {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .time-setting {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .time-label {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 500;
             color: #5d4e37;
-            min-width: 45px;
+            min-width: 50px;
         }
 
         .time-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex: 1;
         }
 
@@ -274,13 +275,13 @@
             background: linear-gradient(145deg, #f4f0e8, #e8ddc7);
             border: 1px solid rgba(139, 115, 85, 0.2);
             border-radius: 8px;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #5d4e37;
             transition: all 0.2s ease;
             font-weight: 500;
@@ -291,27 +292,27 @@
         }
 
         .time-display {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: #5d4e37;
-            min-width: 35px;
+            min-width: 40px;
             text-align: center;
         }
 
         .session-inputs {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .input-group label {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 500;
             color: #5d4e37;
             margin-bottom: 4px;
@@ -319,10 +320,10 @@
 
         .input-group select, .input-group input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 14px;
             border: 1px solid rgba(139, 115, 85, 0.2);
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             background: linear-gradient(145deg, #fefcf7, #f9f5ed);
             font-family: 'DM Sans', sans-serif;
             color: #5d4e37;
@@ -345,9 +346,9 @@
             background: linear-gradient(145deg, #f4f0e8, #ede4d3);
             border: 1px solid rgba(139, 115, 85, 0.1);
             border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
-            gap: 2px;
+            padding: 6px;
+            margin-bottom: 24px;
+            gap: 3px;
             box-shadow: inset 0 2px 4px rgba(139, 115, 85, 0.05);
         }
 
@@ -355,9 +356,9 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 10px 16px;
+            padding: 12px 18px;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: #8b7d6b;
             cursor: pointer;
@@ -386,15 +387,15 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
             background: linear-gradient(145deg, #f9f5ed, #f0e8d6);
             border: 1px solid rgba(139, 115, 85, 0.1);
             border-radius: 12px;
-            padding: 16px;
+            padding: 20px;
             text-align: center;
             box-shadow: 
                 0 4px 12px rgba(139, 115, 85, 0.1),
@@ -402,41 +403,42 @@
         }
 
         .stat-number {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: #8b7355;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             text-shadow: 0 1px 2px rgba(139, 115, 85, 0.1);
         }
 
         .stat-label {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #8b7d6b;
             font-weight: 500;
         }
 
         .chart-container {
-            margin-bottom: 20px;
-            height: 200px;
+            margin-bottom: 24px;
+            height: 180px;
             position: relative;
             background: linear-gradient(145deg, #fefcf7, #f5f1e8);
             border: 1px solid rgba(139, 115, 85, 0.1);
             border-radius: 12px;
-            padding: 12px;
+            padding: 16px;
             box-shadow: inset 0 2px 4px rgba(139, 115, 85, 0.05);
         }
 
         .session-list {
             flex: 1;
             overflow-y: auto;
+            max-height: 220px;
         }
 
         .session-item {
             background: linear-gradient(145deg, #f9f5ed, #f0e8d6);
             border: 1px solid rgba(139, 115, 85, 0.1);
             border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -450,58 +452,60 @@
         .session-category {
             font-weight: 600;
             color: #8b7355;
-            font-size: 0.9rem;
-            margin-bottom: 2px;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
         }
 
         .session-notes {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #5d4e37;
-            margin: 4px 0;
+            margin: 6px 0;
             line-height: 1.4;
         }
 
         .session-time {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #8b7d6b;
         }
 
         .session-duration {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: #7a6249;
             text-align: right;
             background: linear-gradient(145deg, #ede4d3, #e0d4c1);
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
             border: 1px solid rgba(139, 115, 85, 0.15);
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .widget {
-                width: 90%;
-                max-width: 500px;
+                width: 95%;
+                max-width: 580px;
                 height: auto;
-                min-height: 400px;
+                min-height: 500px;
                 flex-direction: column;
+                padding: 24px;
             }
             
             .timer-view {
                 flex-direction: column;
-                gap: 20px;
+                gap: 24px;
             }
             
             .timer-section, .controls-section {
                 flex: none;
+                padding: 0;
             }
             
             .timer-circle {
-                width: 140px;
-                height: 140px;
+                width: 160px;
+                height: 160px;
             }
             
             .timer-display {
-                font-size: 2rem;
+                font-size: 2.1rem;
             }
             
             .stats-grid {
@@ -510,11 +514,43 @@
 
             .session-inputs {
                 flex-direction: row;
-                gap: 12px;
+                gap: 16px;
             }
 
             .input-group {
                 flex: 1;
+            }
+
+            .chart-container {
+                height: 160px;
+            }
+
+            .session-list {
+                max-height: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .widget {
+                padding: 20px;
+                min-height: 480px;
+            }
+
+            .session-inputs {
+                flex-direction: column;
+            }
+
+            .time-settings {
+                gap: 14px;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 16px;
             }
         }
     </style>
@@ -527,7 +563,7 @@
                 <div class="widget-header">
                     <div class="widget-title">Pomodoro Timer</div>
                     <button class="nav-btn" id="showHistoryBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12,6 12,12 16,14"/>
                         </svg>
@@ -536,8 +572,8 @@
 
                 <div class="timer-circle">
                     <svg class="progress-ring">
-                        <circle class="progress-circle" cx="80" cy="80" r="72"></circle>
-                        <circle class="progress-circle active" cx="80" cy="80" r="72" id="progress"></circle>
+                        <circle class="progress-circle" cx="90" cy="90" r="82"></circle>
+                        <circle class="progress-circle active" cx="90" cy="90" r="82" id="progress"></circle>
                     </svg>
                     <div class="timer-display" id="timer">25:00</div>
                 </div>
@@ -609,7 +645,7 @@
             <div class="widget-header">
                 <div class="widget-title">Session History</div>
                 <button class="nav-btn" id="showTimerBtn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="m15 18-6-6 6-6"/>
                     </svg>
                 </button>
@@ -876,7 +912,7 @@
             }
 
             updateProgress() {
-                const circumference = 2 * Math.PI * 72;
+                const circumference = 2 * Math.PI * 82;
                 const progress = ((this.totalTime - this.timeLeft) / this.totalTime) * circumference;
                 
                 this.progressEl.style.strokeDasharray = circumference;
