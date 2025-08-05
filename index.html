@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer</title>
+    <title>Mini Pomodoro Widget</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f7;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -21,59 +22,141 @@
             padding: 20px;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+        .widget {
+            background: white;
+            border-radius: 20px;
+            width: 280px;
+            height: 320px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .widget-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .history-btn {
+            background: #f2f2f7;
+            border: none;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .history-btn:hover {
+            background: #e5e5ea;
+        }
+
+        .timer-circle {
+            width: 120px;
+            height: 120px;
+            margin: 10px auto 15px;
+            position: relative;
+        }
+
+        .progress-ring {
             width: 100%;
-            text-align: center;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle {
+            fill: none;
+            stroke: #f2f2f7;
+            stroke-width: 6;
+        }
+
+        .progress-circle.active {
+            stroke: #007aff;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.3s ease;
         }
 
         .timer-display {
-            font-size: 4rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
             font-weight: 300;
             color: #1d1d1f;
-            margin-bottom: 20px;
             font-variant-numeric: tabular-nums;
-            letter-spacing: -2px;
         }
 
-        .session-info {
+        .session-status {
+            text-align: center;
             color: #6e6e73;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
+            font-size: 0.75rem;
+            margin-bottom: 15px;
+            height: 18px;
+        }
+
+        .timer-modes {
+            display: flex;
+            background: #f2f2f7;
+            border-radius: 8px;
+            padding: 2px;
+            margin-bottom: 15px;
+            gap: 2px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #6e6e73;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #1d1d1f;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .controls {
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .btn {
+            flex: 1;
             background: #007aff;
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-size: 1rem;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-family: inherit;
         }
 
         .btn:hover {
             background: #0056cc;
-            transform: translateY(-1px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
         }
 
         .btn.secondary {
@@ -85,123 +168,99 @@
             background: #e5e5ea;
         }
 
-        .btn.reset {
-            background: #ff3b30;
-        }
-
-        .btn.reset:hover {
-            background: #d70015;
+        .session-inputs {
+            display: flex;
+            gap: 8px;
         }
 
         .input-group {
-            margin-bottom: 20px;
-            text-align: left;
+            flex: 1;
         }
 
-        .input-group label {
-            display: block;
-            color: #1d1d1f;
-            font-weight: 500;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .input-group input, .input-group textarea, .input-group select {
+        .input-group select, .input-group input {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #d1d1d6;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
+            padding: 6px 8px;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            font-size: 0.75rem;
             background: white;
-            transition: border-color 0.2s ease;
         }
 
-        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
-            outline: none;
-            border-color: #007aff;
+        .input-group input::placeholder {
+            color: #a1a1a6;
         }
 
-        .input-group textarea {
-            resize: vertical;
-            min-height: 80px;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
-        .session-history {
-            margin-top: 30px;
-            text-align: left;
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .session-history h3 {
-            color: #1d1d1f;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 15px;
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .session-item {
-            background: #f2f2f7;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-
-        .session-header {
+        .modal-header {
+            padding: 20px 20px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
         }
 
-        .session-category {
+        .modal-title {
+            font-size: 1.3rem;
             font-weight: 600;
-            color: #007aff;
+            color: #1d1d1f;
         }
 
-        .session-duration {
-            font-size: 0.85rem;
+        .close-btn {
+            background: #f2f2f7;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
             color: #6e6e73;
         }
 
-        .session-notes {
-            font-size: 0.9rem;
-            color: #1d1d1f;
-            line-height: 1.4;
-        }
-
-        .progress-ring {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 20px;
-        }
-
-        .progress-circle {
-            fill: none;
-            stroke: #e5e5ea;
-            stroke-width: 8;
-        }
-
-        .progress-circle.active {
-            stroke: #007aff;
-            stroke-linecap: round;
-            transition: stroke-dasharray 0.5s ease;
-        }
-
-        .timer-modes {
+        .modal-tabs {
             display: flex;
-            background: #f2f2f7;
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 30px;
+            padding: 20px 20px 0;
             gap: 4px;
+            background: #f8f9fa;
+            margin: 0 20px;
+            border-radius: 8px;
         }
 
-        .mode-btn {
+        .tab-btn {
             flex: 1;
             background: transparent;
             border: none;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 0.9rem;
             font-weight: 500;
             color: #6e6e73;
@@ -209,86 +268,230 @@
             transition: all 0.2s ease;
         }
 
-        .mode-btn.active {
+        .tab-btn.active {
             background: white;
             color: #1d1d1f;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 50vh;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #007aff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6e6e73;
+        }
+
+        .chart-container {
+            margin-bottom: 20px;
+            height: 250px;
+            position: relative;
+        }
+
+        .session-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .session-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .session-main {
+            flex: 1;
+        }
+
+        .session-category {
+            font-weight: 600;
+            color: #007aff;
+            font-size: 0.9rem;
+        }
+
+        .session-notes {
+            font-size: 0.8rem;
+            color: #1d1d1f;
+            margin: 4px 0;
+            line-height: 1.3;
+        }
+
+        .session-time {
+            font-size: 0.75rem;
+            color: #6e6e73;
+        }
+
+        .session-duration {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #34c759;
+            text-align: right;
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 30px 20px;
+            .widget {
+                width: 240px;
+                height: 300px;
+                padding: 16px;
+            }
+            
+            .timer-circle {
+                width: 100px;
+                height: 100px;
             }
             
             .timer-display {
-                font-size: 3rem;
+                font-size: 1.3rem;
             }
             
-            .controls {
-                flex-direction: column;
-                align-items: center;
+            .modal-content {
+                width: 95%;
+                height: 85vh;
             }
             
-            .btn {
-                width: 100%;
-                max-width: 200px;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Progress Ring -->
-        <svg class="progress-ring">
-            <circle class="progress-circle" cx="100" cy="100" r="90"></circle>
-            <circle class="progress-circle active" cx="100" cy="100" r="90" id="progress"></circle>
-        </svg>
+    <div class="widget">
+        <div class="widget-header">
+            <div class="widget-title">Pomodoro</div>
+            <button class="history-btn" id="historyBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12,6 12,12 16,14"/>
+                </svg>
+            </button>
+        </div>
 
-        <!-- Timer Display -->
-        <div class="timer-display" id="timer">25:00</div>
-        <div class="session-info" id="sessionInfo">Ready to focus</div>
+        <div class="timer-circle">
+            <svg class="progress-ring">
+                <circle class="progress-circle" cx="60" cy="60" r="54"></circle>
+                <circle class="progress-circle active" cx="60" cy="60" r="54" id="progress"></circle>
+            </svg>
+            <div class="timer-display" id="timer">25:00</div>
+        </div>
 
-        <!-- Timer Modes -->
+        <div class="session-status" id="sessionStatus">Ready to focus</div>
+
         <div class="timer-modes">
             <button class="mode-btn active" data-mode="pomodoro">Focus</button>
-            <button class="mode-btn" data-mode="short">Short Break</button>
-            <button class="mode-btn" data-mode="long">Long Break</button>
+            <button class="mode-btn" data-mode="short">Break</button>
+            <button class="mode-btn" data-mode="long">Rest</button>
         </div>
 
-        <!-- Controls -->
         <div class="controls">
             <button class="btn" id="startPause">Start</button>
-            <button class="btn secondary" id="skip">Skip</button>
-            <button class="btn reset" id="reset">Reset</button>
+            <button class="btn secondary" id="reset">Reset</button>
         </div>
 
-        <!-- Session Input -->
-        <div class="input-group">
-            <label for="category">Category</label>
-            <select id="category">
-                <option value="Work">Work</option>
-                <option value="Study">Study</option>
-                <option value="Reading">Reading</option>
-                <option value="Writing">Writing</option>
-                <option value="Design">Design</option>
-                <option value="Other">Other</option>
-            </select>
+        <div class="session-inputs">
+            <div class="input-group">
+                <select id="category">
+                    <option value="Work">Work</option>
+                    <option value="Study">Study</option>
+                    <option value="Reading">Reading</option>
+                    <option value="Design">Design</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="text" id="notes" placeholder="Task notes...">
+            </div>
         </div>
+    </div>
 
-        <div class="input-group">
-            <label for="notes">Session Notes</label>
-            <textarea id="notes" placeholder="What are you working on?"></textarea>
-        </div>
+    <!-- History Modal -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Session History</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
 
-        <!-- Session History -->
-        <div class="session-history">
-            <h3>Session History</h3>
-            <div id="historyList"></div>
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="sessions">Sessions</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="tab-content active" id="overviewTab">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalSessions">0</div>
+                            <div class="stat-label">Total Sessions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalTime">0h</div>
+                            <div class="stat-label">Focus Time</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="avgSession">0m</div>
+                            <div class="stat-label">Avg Session</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="todaySessions">0</div>
+                            <div class="stat-label">Today</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="sessionsTab">
+                    <div class="session-list" id="sessionList"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        class PomodoroTimer {
+        class MiniPomodoroTimer {
             constructor() {
                 this.modes = {
                     pomodoro: 25 * 60,
@@ -307,29 +510,39 @@
                 this.initEventListeners();
                 this.updateDisplay();
                 this.updateProgress();
-                this.renderHistory();
             }
 
             initElements() {
                 this.timerEl = document.getElementById('timer');
-                this.sessionInfoEl = document.getElementById('sessionInfo');
+                this.statusEl = document.getElementById('sessionStatus');
                 this.startPauseBtn = document.getElementById('startPause');
-                this.skipBtn = document.getElementById('skip');
                 this.resetBtn = document.getElementById('reset');
                 this.categoryEl = document.getElementById('category');
                 this.notesEl = document.getElementById('notes');
-                this.historyEl = document.getElementById('historyList');
                 this.progressEl = document.getElementById('progress');
                 this.modeButtons = document.querySelectorAll('.mode-btn');
+                this.historyBtn = document.getElementById('historyBtn');
+                this.modal = document.getElementById('historyModal');
+                this.closeModalBtn = document.getElementById('closeModal');
+                this.tabButtons = document.querySelectorAll('.tab-btn');
             }
 
             initEventListeners() {
                 this.startPauseBtn.addEventListener('click', () => this.toggleTimer());
-                this.skipBtn.addEventListener('click', () => this.skipSession());
                 this.resetBtn.addEventListener('click', () => this.resetTimer());
+                this.historyBtn.addEventListener('click', () => this.showHistory());
+                this.closeModalBtn.addEventListener('click', () => this.hideHistory());
+                
+                this.modal.addEventListener('click', (e) => {
+                    if (e.target === this.modal) this.hideHistory();
+                });
                 
                 this.modeButtons.forEach(btn => {
                     btn.addEventListener('click', () => this.switchMode(btn.dataset.mode));
+                });
+
+                this.tabButtons.forEach(btn => {
+                    btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
                 });
             }
 
@@ -337,21 +550,15 @@
                 this.currentMode = mode;
                 this.timeLeft = this.modes[mode];
                 this.totalTime = this.modes[mode];
-                this.isRunning = false;
-                
-                if (this.interval) {
-                    clearInterval(this.interval);
-                    this.interval = null;
-                }
+                this.resetTimer();
                 
                 this.modeButtons.forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.mode === mode);
                 });
                 
-                this.startPauseBtn.textContent = 'Start';
                 this.updateDisplay();
                 this.updateProgress();
-                this.updateSessionInfo();
+                this.updateStatus();
             }
 
             toggleTimer() {
@@ -365,14 +572,14 @@
             startTimer() {
                 this.isRunning = true;
                 this.startPauseBtn.textContent = 'Pause';
-                this.updateSessionInfo();
+                this.updateStatus();
                 
                 this.interval = setInterval(() => {
                     this.timeLeft--;
                     this.updateDisplay();
                     this.updateProgress();
                     
-                    if (this.timeLeft <= 0) {
+                    if (this.timeLeft <= 0 && this.currentMode === 'pomodoro') {
                         this.completeSession();
                     }
                 }, 1000);
@@ -381,7 +588,7 @@
             pauseTimer() {
                 this.isRunning = false;
                 this.startPauseBtn.textContent = 'Resume';
-                this.updateSessionInfo();
+                this.updateStatus();
                 
                 if (this.interval) {
                     clearInterval(this.interval);
@@ -402,36 +609,17 @@
                 this.startPauseBtn.textContent = 'Start';
                 this.updateDisplay();
                 this.updateProgress();
-                this.updateSessionInfo();
-            }
-
-            skipSession() {
-                if (this.currentMode === 'pomodoro') {
-                    this.saveSession();
-                }
-                this.completeSession();
+                this.updateStatus();
             }
 
             completeSession() {
-                this.isRunning = false;
-                
-                if (this.interval) {
-                    clearInterval(this.interval);
-                    this.interval = null;
-                }
-
                 if (this.currentMode === 'pomodoro') {
                     this.saveSession();
                 }
-
-                // Auto-switch to next mode
-                this.autoSwitchMode();
                 
-                // Play notification sound (if supported)
                 this.playNotification();
-            }
-
-            autoSwitchMode() {
+                
+                // Auto-switch to break
                 if (this.currentMode === 'pomodoro') {
                     this.switchMode('short');
                 } else {
@@ -444,22 +632,18 @@
                     id: Date.now(),
                     category: this.categoryEl.value,
                     notes: this.notesEl.value.trim(),
-                    duration: this.formatTime(this.totalTime - this.timeLeft),
-                    completedAt: new Date().toLocaleString(),
+                    duration: Math.max(0, this.totalTime - this.timeLeft),
+                    completedAt: new Date(),
                     completed: this.timeLeft <= 0
                 };
 
                 this.sessions.unshift(session);
                 
-                // Keep only last 10 sessions
-                if (this.sessions.length > 10) {
-                    this.sessions = this.sessions.slice(0, 10);
+                if (this.sessions.length > 50) {
+                    this.sessions = this.sessions.slice(0, 50);
                 }
                 
                 this.saveSessions();
-                this.renderHistory();
-                
-                // Clear notes for next session
                 this.notesEl.value = '';
             }
 
@@ -468,14 +652,14 @@
             }
 
             updateProgress() {
-                const circumference = 2 * Math.PI * 90;
+                const circumference = 2 * Math.PI * 54;
                 const progress = ((this.totalTime - this.timeLeft) / this.totalTime) * circumference;
                 
                 this.progressEl.style.strokeDasharray = circumference;
                 this.progressEl.style.strokeDashoffset = circumference - progress;
             }
 
-            updateSessionInfo() {
+            updateStatus() {
                 const modeNames = {
                     pomodoro: 'Focus Time',
                     short: 'Short Break',
@@ -491,7 +675,181 @@
                     status = 'Paused';
                 }
 
-                this.sessionInfoEl.textContent = `${modeNames[this.currentMode]} • ${status}`;
+                this.statusEl.textContent = status;
+            }
+
+            showHistory() {
+                this.modal.classList.add('show');
+                this.updateStats();
+                this.renderCharts();
+                this.renderSessionList();
+            }
+
+            hideHistory() {
+                this.modal.classList.remove('show');
+            }
+
+            switchTab(tab) {
+                this.tabButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tab);
+                });
+
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.toggle('active', content.id === tab + 'Tab');
+                });
+
+                if (tab === 'overview') {
+                    setTimeout(() => this.renderCharts(), 100);
+                }
+            }
+
+            updateStats() {
+                const totalSessions = this.sessions.length;
+                const totalMinutes = this.sessions.reduce((sum, s) => sum + Math.floor(s.duration / 60), 0);
+                const avgMinutes = totalSessions > 0 ? Math.floor(totalMinutes / totalSessions) : 0;
+                
+                const today = new Date().toDateString();
+                const todayCount = this.sessions.filter(s => 
+                    new Date(s.completedAt).toDateString() === today
+                ).length;
+
+                document.getElementById('totalSessions').textContent = totalSessions;
+                document.getElementById('totalTime').textContent = `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
+                document.getElementById('avgSession').textContent = `${avgMinutes}m`;
+                document.getElementById('todaySeconds').textContent = todayCount;
+            }
+
+            renderCharts() {
+                this.renderCategoryChart();
+                this.renderTimeChart();
+            }
+
+            renderCategoryChart() {
+                const canvas = document.getElementById('categoryChart');
+                const ctx = canvas.getContext('2d');
+                
+                // Clear previous chart
+                if (this.categoryChart) {
+                    this.categoryChart.destroy();
+                }
+
+                const categoryData = {};
+                this.sessions.forEach(session => {
+                    categoryData[session.category] = (categoryData[session.category] || 0) + 1;
+                });
+
+                const colors = ['#007aff', '#34c759', '#ff9500', '#ff3b30', '#af52de', '#5ac8fa'];
+
+                this.categoryChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(categoryData),
+                        datasets: [{
+                            data: Object.values(categoryData),
+                            backgroundColor: colors.slice(0, Object.keys(categoryData).length),
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 12 },
+                                    padding: 15
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderTimeChart() {
+                const canvas = document.getElementById('timeChart');
+                const ctx = canvas.getContext('2d');
+                
+                if (this.timeChart) {
+                    this.timeChart.destroy();
+                }
+
+                // Get last 7 days of data
+                const last7Days = [];
+                const today = new Date();
+                
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    last7Days.push({
+                        date: date.toDateString(),
+                        label: date.toLocaleDateString('en', { weekday: 'short' }),
+                        minutes: 0
+                    });
+                }
+
+                this.sessions.forEach(session => {
+                    const sessionDate = new Date(session.completedAt).toDateString();
+                    const dayData = last7Days.find(day => day.date === sessionDate);
+                    if (dayData) {
+                        dayData.minutes += Math.floor(session.duration / 60);
+                    }
+                });
+
+                this.timeChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: last7Days.map(day => day.label),
+                        datasets: [{
+                            label: 'Focus Minutes',
+                            data: last7Days.map(day => day.minutes),
+                            borderColor: '#007aff',
+                            backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: value => `${value}m`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderSessionList() {
+                const listEl = document.getElementById('sessionList');
+                
+                if (this.sessions.length === 0) {
+                    listEl.innerHTML = '<p style="text-align: center; color: #6e6e73; padding: 40px;">No sessions yet</p>';
+                    return;
+                }
+
+                listEl.innerHTML = this.sessions.map(session => {
+                    const date = new Date(session.completedAt);
+                    const duration = Math.floor(session.duration / 60);
+                    
+                    return `
+                        <div class="session-item">
+                            <div class="session-main">
+                                <div class="session-category">${session.category}</div>
+                                ${session.notes ? `<div class="session-notes">${session.notes}</div>` : ''}
+                                <div class="session-time">${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                            </div>
+                            <div class="session-duration">${duration}m</div>
+                        </div>
+                    `;
+                }).join('');
             }
 
             formatTime(seconds) {
@@ -501,26 +859,9 @@
                 return `${sign}${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
             }
 
-            renderHistory() {
-                if (this.sessions.length === 0) {
-                    this.historyEl.innerHTML = '<p style="color: #6e6e73; text-align: center; padding: 20px;">No sessions yet</p>';
-                    return;
-                }
-
-                this.historyEl.innerHTML = this.sessions.map(session => `
-                    <div class="session-item">
-                        <div class="session-header">
-                            <span class="session-category">${session.category}</span>
-                            <span class="session-duration">${session.duration} • ${session.completedAt}</span>
-                        </div>
-                        ${session.notes ? `<div class="session-notes">${session.notes}</div>` : ''}
-                    </div>
-                `).join('');
-            }
-
             loadSessions() {
                 try {
-                    const stored = sessionStorage.getItem('pomodoroSessions');
+                    const stored = sessionStorage.getItem('miniPomodoroSessions');
                     return stored ? JSON.parse(stored) : [];
                 } catch {
                     return [];
@@ -529,14 +870,13 @@
 
             saveSessions() {
                 try {
-                    sessionStorage.setItem('pomodoroSessions', JSON.stringify(this.sessions));
+                    sessionStorage.setItem('miniPomodoroSessions', JSON.stringify(this.sessions));
                 } catch {
                     console.warn('Unable to save sessions');
                 }
             }
 
             playNotification() {
-                // Create a simple beep sound
                 try {
                     const context = new (window.AudioContext || window.webkitAudioContext)();
                     const oscillator = context.createOscillator();
@@ -552,7 +892,6 @@
                     oscillator.start(context.currentTime);
                     oscillator.stop(context.currentTime + 0.5);
                 } catch {
-                    // Fallback: just vibrate if supported
                     if (navigator.vibrate) {
                         navigator.vibrate([200, 100, 200]);
                     }
@@ -560,9 +899,8 @@
             }
         }
 
-        // Initialize the timer when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new PomodoroTimer();
+            new MiniPomodoroTimer();
         });
     </script>
 </body>
