@@ -84,9 +84,17 @@
 
         .widget-header {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 24px;
             align-items: center;
+            width: 100%;
+            gap: 30px;
+        }
+
+        .widget-header.timer {
+            justify-content: flex-end;
+        }
+
+        .widget-header.history {
+            justify-content: space-between;
         }
 
         .widget-title {
@@ -493,6 +501,7 @@
                 flex: none;
                 padding: 0;
                 align-self: center;
+                justify-content: space-around;
             }
             
             .timer-circle {
@@ -556,7 +565,7 @@
         <!-- Timer View -->
         <div class="timer-view" id="timerView">
             <div class="timer-section">
-                <div class="widget-header">
+                <div class="widget-header timer">
                     <div class="widget-title">Pomodoro Timer</div>
                     <button class="nav-btn" id="showHistoryBtn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -638,7 +647,7 @@
 
         <!-- History View -->
         <div class="history-view" id="historyView">
-            <div class="widget-header">
+            <div class="widget-header history">
                 <div class="widget-title">Session History</div>
                 <button class="nav-btn" id="showTimerBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
